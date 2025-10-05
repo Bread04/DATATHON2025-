@@ -1,3 +1,6 @@
+Academic File: https://docs.google.com/document/d/1rAuelKBTeE5x5edyfmV9kSQBq6SXdnVCchDSk8pEvXQ/edit?usp=sharing
+Video to Explanation: 
+Data Cleaning and Workings: https://docs.google.com/document/d/1lOP43IQVrXbH-x6KzTHRRm-tcBhCSyLBDLM4EnJnRaI/edit?usp=sharing
 # DATATHON2025-
 The main objective of this challenge is to use real-world CTG recordings to build a solution that supports clinicians in spotting fetal distress. By analyzing patterns in the data, you are expected to design a system that can reliably separate Normal, Suspect, and Pathologic cases. 
 
