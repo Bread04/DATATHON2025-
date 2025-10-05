@@ -212,7 +212,7 @@ Dimensionality Reduction
     plt.title("PCA Projection of CTG Data")
     plt.show()
 
-MIN_MAX SCALER
+MIN_MAX SCALER AND DETERMINE VARIABLES MOST RELATED TO THE TARGET VARIABLE
 
     X = sheet2_cleaned[numeric_cols]
     scaler = MinMaxScaler()
@@ -224,6 +224,8 @@ MIN_MAX SCALER
     
     selected_features = [numeric_cols[i] for i in selector.get_support(indices=True)]
     print("Top 10 features:", selected_features)
+<img width="1119" height="264" alt="image" src="https://github.com/user-attachments/assets/48b4b494-d3c9-4cb8-bf29-4e8e9953841c" />
+
 
 Visual Inspection with BoxPlots 
 
@@ -667,7 +669,7 @@ K-nearest neighbours
     unique_models_df
     print(unique_models_df)
     
-#Visualize Model
+# Visualize Model
 
     import matplotlib.pyplot as plt
     
