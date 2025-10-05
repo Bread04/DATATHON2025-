@@ -154,3 +154,180 @@ The main objective of this challenge is to use real-world CTG recordings to buil
 
 
 ## DATA CLEANING STEP 2
+
+#NSP CLASS DISTRIBUTION
+
+    class_counts = sheet2_cleaned['NSP'].value_counts().sort_index()
+    class_props = class_counts / class_counts.sum()
+    
+    sns.barplot(x=class_counts.index.astype(int), y=class_counts.values)
+    plt.title("NSP Class Distribution")
+    plt.xlabel("NSP Class")
+    plt.ylabel("Count")
+    plt.show()
+<img width="774" height="524" alt="image" src="https://github.com/user-attachments/assets/cf40f2a6-7746-4a78-9dd1-ea2fd863891f" />
+
+#Feature Distribution By Class For ATV
+
+    sns.violinplot(x='NSP', y='ASTV', data=sheet2_cleaned)
+    plt.title("ASTV Distribution by NSP Class")
+    plt.show()
+    numeric_cols = [col for col in sheet2_cleaned.columns if pd.api.types.is_numeric_dtype(sheet2_cleaned[col])]
+    corr_matrix = sheet2_cleaned[numeric_cols].corr()
+<img width="692" height="515" alt="image" src="https://github.com/user-attachments/assets/7dd4d203-8fdd-42ab-a86b-b705c19d75e1" />
+#Correlation Heatmap
+
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(corr_matrix, cmap='coolwarm', annot=False)
+    plt.title("Feature Correlation Matrix")
+    plt.show()
+<img width="772" height="580" alt="image" src="https://github.com/user-attachments/assets/2297fce5-f311-4fb9-b193-f24886f66b85" />
+
+#Dimensionality Reduction
+
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(sheet2_cleaned[numeric_cols])
+    
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X_scaled)
+    
+    sns.scatterplot(x=X_pca[:,0], y=X_pca[:,1], hue=sheet2_cleaned['NSP'])
+    plt.title("PCA Projection of CTG Data")
+    plt.show()
+
+#MIN_MAX SCALER
+
+    X = sheet2_cleaned[numeric_cols]
+    scaler = MinMaxScaler()
+    X_scaled = scaler.fit_transform(X)
+    y = sheet2_cleaned['NSP']
+    
+    selector = SelectKBest(score_func=chi2, k=10)
+    selector.fit(X_scaled, y)
+    
+    selected_features = [numeric_cols[i] for i in selector.get_support(indices=True)]
+    print("Top 10 features:", selected_features)
+
+#Visual Inspection with BoxPlots 
+
+    plt.figure(figsize=(16, 10))
+    sns.boxplot(data=X)
+    plt.xticks(rotation=90)
+    plt.title("Boxplot of Numeric Features")
+    plt.show()
+
+<img width="799" height="539" alt="image" src="https://github.com/user-attachments/assets/0c14169e-31a1-4904-b31a-391ac1397536" />
+
+# Compute z-scores for FM
+    sheet2_cleaned['FM_zscore'] = zscore(sheet2_cleaned['FM'])
+
+# Flag anomalies: z-score > 3 or < -3
+    sheet2_cleaned['FM_anomaly'] = sheet2_cleaned['FM_zscore'].abs() > 3
+
+# Create scatter plot
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(
+        data=sheet2_cleaned,
+        x='FM',
+        y='NSP',
+        hue='FM_anomaly',
+        palette={True: 'red', False: 'blue'},
+        alpha=0.7
+    )
+    
+    plt.title('FM vs NSP with Anomalies Highlighted')
+    plt.xlabel('FM (Fetal Movement)')
+    plt.ylabel('NSP (Fetal State)')
+    plt.legend(title='FM Anomaly')        
+<img width="784" height="505" alt="image" src="https://github.com/user-attachments/assets/df5c2ccc-6a1f-4f74-86ae-38665bd39241" />
+
+# Compute z-scores for FM
+    sheet2_cleaned['FM_zscore'] = zscore(sheet2_cleaned['FM'])
+
+# Flag anomalies: z-score > 3 or < -3
+    sheet2_cleaned['FM_anomaly'] = sheet2_cleaned['FM_zscore'].abs() > 3
+
+# Create scatter plot
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(
+        data=sheet2_cleaned,
+        x='FM',
+        y='NSP',
+        hue='FM_anomaly',
+        palette={True: 'red', False: 'blue'},
+        alpha=0.7
+    )
+    
+    plt.title('FM vs NSP with Anomalies Highlighted')
+    plt.xlabel('FM (Fetal Movement)')
+    plt.ylabel('NSP (Fetal State)')
+    plt.legend(title='FM Anomaly')
+    plt.tight_layout()
+    plt.show()
+<img width="774" height="469" alt="image" src="https://github.com/user-attachments/assets/bf7bf894-011e-4c3d-aa42-be21c1bba4bf" />
+
+
+#Zscore for all features
+
+     z_scores = np.abs(zscore(X))
+    anomaly_mask = (z_scores > 3)
+    anomaly_counts = anomaly_mask.sum(axis=0)
+    
+    pd.DataFrame({
+        'Feature': X.columns,
+        'Anomalies': anomaly_counts
+    }).sort_values(by='Anomalies', ascending=False)
+
+<img width="245" height="731" alt="image" src="https://github.com/user-attachments/assets/c678b157-b842-467c-9ed1-17183a249145" />
+
+  
+#AC VS ALTV
+
+    sns.scatterplot(data=sheet2_cleaned, x='ALTV', y='AC', hue='NSP', palette='Set1')
+    plt.title('AC vs ALTV Colored by NSP Class')
+    plt.xlabel('ALTV')
+    plt.ylabel('AC')
+    plt.show()
+
+<img width="737" height="477" alt="image" src="https://github.com/user-attachments/assets/6ebebcb3-1737-4092-9252-0325f3007474" />
+
+#AC VS DP
+
+    sns.scatterplot(data=sheet2_cleaned, x='ALTV', y='DP', hue='NSP', palette='Set1')
+    plt.title('ATLV VS DP Colored by NSP Class')
+    plt.xlabel('ALTV')
+    plt.ylabel('DP')
+    plt.show()
+
+<img width="738" height="490" alt="image" src="https://github.com/user-attachments/assets/c12bc2bf-4e39-43ac-8f19-9aa92fe97b7f" />
+
+# Compute z-scores for ALTV
+    sheet2_cleaned['ALTV_z'] = zscore(sheet2_cleaned['ALTV'])
+# Flag anomalies: z-score > 3
+    sheet2_cleaned['ALTV_anomaly'] = sheet2_cleaned['ALTV_z'].abs() > 3
+# Create scatter plot
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(
+        data=sheet2_cleaned,
+        x='ALTV',
+        y='NSP',
+        hue='ALTV_anomaly',
+        palette={True: 'red', False: 'blue'},
+        alpha=0.7
+    )
+    plt.title('ALTV vs NSP with Anomalies Highlighted')
+    plt.xlabel('ALTV (% Abnormal Long-Term Variability)')
+    plt.ylabel('NSP (Fetal State)')
+    plt.legend(title='ALTV Anomaly')
+    plt.tight_layout()
+    plt.show()
+    
+ <img width="788" height="465" alt="image" src="https://github.com/user-attachments/assets/c13aafb6-fc40-4622-83f6-ffd6435ca0bc" />
+
+#Analyse mean, std of DATA
+    
+    sheet2_cleaned.describe().T
+
+<img width="524" height="725" alt="image" src="https://github.com/user-attachments/assets/775db4a6-0e72-4156-a138-145ac8ecc5ad" />
+
+
