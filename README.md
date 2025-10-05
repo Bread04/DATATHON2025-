@@ -170,7 +170,7 @@ Prepare training data
     sheet2_cleaned.head()
 
 
-## DATA CLEANING STEP 2
+## DATA VISUALISATION
 
 NSP CLASS DISTRIBUTION
 
