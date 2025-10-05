@@ -656,6 +656,9 @@ K-nearest neighbours
     plt.xlabel('Balanced Accuracy')
     plt.title('Best Version of Each Model')
     plt.gca().invert_yaxis()
-<img width="806" height="600" alt="image" src="https://github.com/user-attachments/assets/5f0ce8f6-17d0-4a7b-a3f3-6d2b5696eab7" />
-
     plt.show()
+<img width="806" height="600" alt="image" src="https://github.com/user-attachments/assets/5f0ce8f6-17d0-4a7b-a3f3-6d2b5696eab7" />
+Overall, Gradient Boosting offers the best trade-off between performance, fairness, and explainability. More Explained in Academic Report!
+
+
+
