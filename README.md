@@ -37,8 +37,8 @@ The main objective of this challenge is to use real-world CTG recordings to buil
     ctg_path = Path("C:/Users/Admin/Downloads/CTG.xlsx")  # Update if needed
     assert ctg_path.exists(), f"Expected Excel file at {ctg_path}"
     
-##Open the Sheets inside the Excel File 
-##Load Sheet 2 with header from row 2
+## Open the Sheets inside the Excel File 
+## Load Sheet 2 with header from row 2
 
         def read_feature_sheet(path: Path, sheet=1):
             xls = pd.ExcelFile(path)
@@ -49,26 +49,26 @@ The main objective of this challenge is to use real-world CTG recordings to buil
                 df = pd.read_excel(xls, sheet_name=sheet_name, header=0)
             return df
     
-Clean headers and data
-Drop empty columns and rows
-Reset index
+## Clean headers and data
+## Drop empty columns and rows
+## Reset index
 
     def clean_ctg_sheet(df):
         df = df.dropna(axis=1, how='all').dropna()
         df.reset_index(drop=True, inplace=True)
         return df
     
-Load and clean
+## Load and clean
 
     sheet2_raw = read_feature_sheet(ctg_path, sheet=1)
     sheet2_cleaned = clean_ctg_sheet(sheet2_raw)
     
-Display summary and first 1000 rows
+## Display summary and first 1000 rows
     
     print("Shape:", sheet2_cleaned.shape)
     print("Columns:", sheet2_cleaned.columns.tolist())
     sheet2_cleaned.head(1000)
-Description of our information
+## Description of our information
     
     sheet2_shape = sheet2_cleaned.shape
     sheet2_info = sheet2_cleaned.info()
@@ -76,13 +76,13 @@ Description of our information
     
     
     
-Setting the Distribution for NSP
-Count and proportion of each class
+## Setting the Distribution for NSP
+## Count and proportion of each class
 
     class_counts = sheet2_cleaned['NSP'].value_counts().sort_index()
     class_props = class_counts / class_counts.sum()
     
-Bar plot of class distribution
+## Bar plot of class distribution (Optional)
 
     fig, ax = plt.subplots(figsize=(6, 4))
     sns.barplot(x=class_counts.index.astype(int), y=class_counts.values, ax=ax)
@@ -90,7 +90,7 @@ Bar plot of class distribution
     ax.set_ylabel('Count')
     ax.set_title('NSP Class Distribution')
     
-Annotate bars with count and proportion
+## Annotate bars with count and proportion (Optional) 
 
     for index, value in enumerate(class_counts.values):
         label = f"{value}\n{class_props.iloc[index]:.1%}"
@@ -99,7 +99,7 @@ Annotate bars with count and proportion
     plt.tight_layout()
     plt.show()
     
-Tabular summary
+## Tabular summary
 
     pd.DataFrame({
         'Class': class_counts.index.astype(int),
@@ -107,7 +107,7 @@ Tabular summary
         'Proportion': class_props.values
     })
     
-Display groupings
+## Display groupings
 
     for group, cols in feature_groups.items():
         print(f"\n🧠 {group} ({len(cols)} features):")
@@ -115,7 +115,7 @@ Display groupings
             print(f"• {col}")# Required import for Path
                   
     
-Define column groups
+## Define column groups (Optional)
 
     physiological_signals = ['AC', 'FM', 'UC', 'DL', 'DS', 'DP', 'DR']
     variability_metrics = ['ASTV', 'mSTV', 'ALTV', 'mLTV']
@@ -126,7 +126,7 @@ Define column groups
     symbolic_features = ['A', 'B', 'C', 'D', 'E', 'AD', 'DE', 'LD', 'FS', 'SUSP', 'CLASS',]
     target_variable = 'NSP'  # Use string, not list
     
-# Organize into dictionary
+## Organize into dictionary
     feature_groups = {
         'Physiological Signals': physiological_signals,
         'Variability Metrics': variability_metrics,
@@ -139,27 +139,27 @@ Define column groups
     }
     
     
-DATA CLEANING TO REMOVE NaNs in columns
+## DATA CLEANING TO REMOVE NaNs in columns
 
     sheet2_filled = sheet2_cleaned.dropna(axis=1)
     print("Remaining NaNs:", sheet2_filled.isna().sum().sum())
     sheet2_filled.head()
     
-Remove duplicate rows
+## Remove duplicate rows
 
     duplicate_rows = sheet2_cleaned.duplicated().sum()
     print("Duplicate rows:", duplicate_rows)
     sheet2_cleaned = sheet2_cleaned.drop_duplicates()
     
-Drop label leakage and redundant columns
+## Drop label leakage and redundant columns
 
     sheet2_cleaned = sheet2_cleaned.drop(columns=redundant_features, errors='ignore')
     
-Define numeric columns (excluding dropped ones)
+## Define numeric columns (excluding dropped ones)
 
     numeric_cols = [col for col in sheet2_cleaned.columns if pd.api.types.is_numeric_dtype(sheet2_cleaned[col])]
     
-Prepare training data
+## Prepare training data
 
     X = sheet2_cleaned[numeric_cols]
     y = sheet2_cleaned[target_variable]  # Use original sheet to retain target
@@ -170,9 +170,9 @@ Prepare training data
     sheet2_cleaned.head()
 
 
-## DATA VISUALISATION
+## DATA VISUALISATION 
 
-NSP CLASS DISTRIBUTION
+## NSP CLASS DISTRIBUTION
 
     class_counts = sheet2_cleaned['NSP'].value_counts().sort_index()
     class_props = class_counts / class_counts.sum()
@@ -184,7 +184,7 @@ NSP CLASS DISTRIBUTION
     plt.show()
 <img width="774" height="524" alt="image" src="https://github.com/user-attachments/assets/cf40f2a6-7746-4a78-9dd1-ea2fd863891f" />
 
-Feature Distribution By Class For ATV
+## Feature Distribution By Class For ATV
 
     sns.violinplot(x='NSP', y='ASTV', data=sheet2_cleaned)
     plt.title("ASTV Distribution by NSP Class")
@@ -192,7 +192,7 @@ Feature Distribution By Class For ATV
     numeric_cols = [col for col in sheet2_cleaned.columns if pd.api.types.is_numeric_dtype(sheet2_cleaned[col])]
     corr_matrix = sheet2_cleaned[numeric_cols].corr()
 <img width="692" height="515" alt="image" src="https://github.com/user-attachments/assets/7dd4d203-8fdd-42ab-a86b-b705c19d75e1" />
-Correlation Heatmap
+## Correlation Heatmap
 
     plt.figure(figsize=(12, 8))
     sns.heatmap(corr_matrix, cmap='coolwarm', annot=False)
@@ -200,7 +200,7 @@ Correlation Heatmap
     plt.show()
 <img width="772" height="580" alt="image" src="https://github.com/user-attachments/assets/2297fce5-f311-4fb9-b193-f24886f66b85" />
 
-Dimensionality Reduction
+## Dimensionality Reduction
 
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(sheet2_cleaned[numeric_cols])
@@ -212,7 +212,7 @@ Dimensionality Reduction
     plt.title("PCA Projection of CTG Data")
     plt.show()
 
-MIN_MAX SCALER AND DETERMINE VARIABLES MOST RELATED TO THE TARGET VARIABLE
+## MIN_MAX SCALER AND DETERMINE VARIABLES MOST RELATED TO THE TARGET VARIABLE
 
     X = sheet2_cleaned[numeric_cols]
     scaler = MinMaxScaler()
@@ -227,7 +227,7 @@ MIN_MAX SCALER AND DETERMINE VARIABLES MOST RELATED TO THE TARGET VARIABLE
 <img width="1119" height="264" alt="image" src="https://github.com/user-attachments/assets/48b4b494-d3c9-4cb8-bf29-4e8e9953841c" />
 
 
-Visual Inspection with BoxPlots 
+## Visual Inspection with BoxPlots 
 
     plt.figure(figsize=(16, 10))
     sns.boxplot(data=X)
@@ -237,15 +237,15 @@ Visual Inspection with BoxPlots
 
 <img width="799" height="539" alt="image" src="https://github.com/user-attachments/assets/0c14169e-31a1-4904-b31a-391ac1397536" />
 
-Compute z-scores for FM
+## Compute z-scores for FM
 
     sheet2_cleaned['FM_zscore'] = zscore(sheet2_cleaned['FM'])
 
-Flag anomalies: z-score > 3 or < -3
+## Flag anomalies: z-score > 3 or < -3
 
     sheet2_cleaned['FM_anomaly'] = sheet2_cleaned['FM_zscore'].abs() > 3
 
-Create a scatter plot
+## Create a scatter plot
 
     plt.figure(figsize=(10, 6))
     sns.scatterplot(
@@ -263,13 +263,13 @@ Create a scatter plot
     plt.legend(title='FM Anomaly')        
 <img width="784" height="505" alt="image" src="https://github.com/user-attachments/assets/df5c2ccc-6a1f-4f74-86ae-38665bd39241" />
 
-# Compute z-scores for FM
+## Compute z-scores for FM
     sheet2_cleaned['FM_zscore'] = zscore(sheet2_cleaned['FM'])
 
-# Flag anomalies: z-score > 3 or < -3
+## Flag anomalies: z-score > 3 or < -3
     sheet2_cleaned['FM_anomaly'] = sheet2_cleaned['FM_zscore'].abs() > 3
 
-# Create scatter plot
+## Create scatter plot
     plt.figure(figsize=(10, 6))
     sns.scatterplot(
         data=sheet2_cleaned,
@@ -289,7 +289,7 @@ Create a scatter plot
 <img width="774" height="469" alt="image" src="https://github.com/user-attachments/assets/bf7bf894-011e-4c3d-aa42-be21c1bba4bf" />
 
 
-#Zscore for all features
+## Zscore for all features
 
      z_scores = np.abs(zscore(X))
     anomaly_mask = (z_scores > 3)
@@ -303,7 +303,7 @@ Create a scatter plot
 <img width="245" height="731" alt="image" src="https://github.com/user-attachments/assets/c678b157-b842-467c-9ed1-17183a249145" />
 
   
-#AC VS ALTV
+## AC VS ALTV
 
     sns.scatterplot(data=sheet2_cleaned, x='ALTV', y='AC', hue='NSP', palette='Set1')
     plt.title('AC vs ALTV Colored by NSP Class')
@@ -313,7 +313,7 @@ Create a scatter plot
 
 <img width="737" height="477" alt="image" src="https://github.com/user-attachments/assets/6ebebcb3-1737-4092-9252-0325f3007474" />
 
-#AC VS DP
+## AC VS DP
 
     sns.scatterplot(data=sheet2_cleaned, x='ALTV', y='DP', hue='NSP', palette='Set1')
     plt.title('ATLV VS DP Colored by NSP Class')
@@ -323,11 +323,11 @@ Create a scatter plot
 
 <img width="738" height="490" alt="image" src="https://github.com/user-attachments/assets/c12bc2bf-4e39-43ac-8f19-9aa92fe97b7f" />
 
-# Compute z-scores for ALTV
+## Compute z-scores for ALTV
     sheet2_cleaned['ALTV_z'] = zscore(sheet2_cleaned['ALTV'])
-# Flag anomalies: z-score > 3
+## Flag anomalies: z-score > 3
     sheet2_cleaned['ALTV_anomaly'] = sheet2_cleaned['ALTV_z'].abs() > 3
-# Create scatter plot
+## Create scatter plot
     plt.figure(figsize=(10, 6))
     sns.scatterplot(
         data=sheet2_cleaned,
@@ -346,7 +346,7 @@ Create a scatter plot
     
  <img width="788" height="465" alt="image" src="https://github.com/user-attachments/assets/c13aafb6-fc40-4622-83f6-ffd6435ca0bc" />
 
-#Analyse mean, std of DATA
+## Analyse mean, std of DATA
     
     sheet2_cleaned.describe().T
 
@@ -374,9 +374,9 @@ From the data seen, it is obvious that the weight distribution for NSP 2 and 3 c
     #Some points lie far from all clusters → potential anomalies
 <img width="597" height="435" alt="image" src="https://github.com/user-attachments/assets/a6cddbf7-e463-4aa0-8536-f22a89691afb" />
 
-Ensures that rare classes (e.g., NSP = 3) are not ignored by the model
-Helps classifiers like Logistic Regression, Random Forest, or XGBoost treat all classes fairly
-Prevents bias toward majority class (NSP = 1)
+## Ensures that rare classes (e.g., NSP = 3) are not ignored by the model
+## Helps classifiers like Logistic Regression, Random Forest, or XGBoost treat all classes fairly
+## Prevents bias toward majority class (NSP = 1)
 
     # 1. Inspect the target column
     sheet2_cleaned[target_variable].value_counts(dropna=False)
@@ -404,7 +404,7 @@ Prevents bias toward majority class (NSP = 1)
     class_weight_dict = dict(zip(classes, weights))
     class_weight_dict
 
-Model Used to Evaluate the AI MODELS (SHARED)
+## Model Used to Evaluate the AI MODELS (SHARED)
 
     def evaluate_model(name, estimator, X_train, y_train, X_test, y_test, fit_kwargs=None, display_report=False):
         fit_kwargs = fit_kwargs or {}
@@ -425,7 +425,7 @@ Model Used to Evaluate the AI MODELS (SHARED)
 
     classes
 
-#DATA MODELLING INTO THE ACTUAL ML MACHINE
+## DATA MODELLING INTO THE ACTUAL ML MACHINE
 
     from pathlib import Path
     import warnings
@@ -455,7 +455,7 @@ Model Used to Evaluate the AI MODELS (SHARED)
 
 
 
-# Inspect and Clean Target Label
+## Inspect and Clean Target Label
     target_variable = 'NSP'
     y = sheet2_cleaned[target_variable]
     mask = y.notna()
@@ -469,11 +469,11 @@ Model Used to Evaluate the AI MODELS (SHARED)
     weights = compute_class_weight(class_weight='balanced', classes=classes, y=y)
     class_weight_dict = dict(zip(classes, weights))
     
-# Step 3: Select Features Based on Visual Insights (Most Prominent)
+## Step 3: Select Features Based on Visual Insights (Most Prominent)
     selected_features = ['AC', 'DL', 'DS', 'DP', 'ASTV', 'MSTV', 'ALTV', 'Min', 'Variance']
     X = sheet2_cleaned[selected_features]
     
- # Step 4 : Add Ethical Alert Logic
+ ## Step 4 : Add Ethical Alert Logic
     
     def ethical_alert(row):
         if row['DP'] > 0 and row['ALTV'] > 80:
@@ -485,12 +485,12 @@ Model Used to Evaluate the AI MODELS (SHARED)
     
     sheet2_cleaned['Ethical_Alert'] = sheet2_cleaned.apply(ethical_alert, axis=1)
     
-# Step 5: Train/Test Split
+## Step 5: Train/Test Split
     from sklearn.model_selection import train_test_split
     
     y = sheet2_cleaned['NSP'].astype(int)
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.2, random_state=42)
-# Indicate Threshold for NSP Class 3 because we want to ensure that the model can predict such cases super accurately, having super-high confidence before making a guess 
+## Indicate Threshold for NSP Class 3 because we want to ensure that the model can predict such cases super accurately, having super-high confidence before making a guess 
     y_pred_custom = np.array([
         3 if p[2] > 0.3 else np.argmax(p) + 1
         for p in probs
@@ -507,11 +507,11 @@ Model Used to Evaluate the AI MODELS (SHARED)
     
 <img width="744" height="500" alt="image" src="https://github.com/user-attachments/assets/7066cac5-a19d-4138-9739-e38117473b94" />
   
-# We show the features that are of most importance which affects NSP
+## We show the features that are of most importance which affects NSP
 
 
 
-#DECSION TREE MODEL
+## DECSION TREE MODEL 
 
     from sklearn.model_selection import GridSearchCV
     from sklearn.tree import DecisionTreeClassifier
@@ -550,7 +550,7 @@ Model Used to Evaluate the AI MODELS (SHARED)
         display_report=True
     )
 <img width="861" height="1107" alt="image" src="https://github.com/user-attachments/assets/c804334a-6900-4278-8a9c-055798fcec48" />
-#GRADIENT BOOST MODEL
+#GRADIENT BOOST MODEL (Model of Choice) 
 
     from sklearn.ensemble import GradientBoostingClassifier
     
@@ -583,7 +583,7 @@ Model Used to Evaluate the AI MODELS (SHARED)
     )
 <img width="692" height="713" alt="image" src="https://github.com/user-attachments/assets/1b049fdd-6667-4433-acee-2a6cbde75003" />
 
-Support Vector Machine
+## Support Vector Machine 
 
     from sklearn.pipeline import Pipeline
     from sklearn.impute import SimpleImputer
@@ -611,7 +611,7 @@ Support Vector Machine
     
    <img width="659" height="704" alt="image" src="https://github.com/user-attachments/assets/a03a4d68-587f-4ad2-9fc7-b0e675cc8a85" />
 
-K-nearest neighbours
+## K-nearest neighbours
 
     from sklearn.pipeline import Pipeline
     from sklearn.impute import SimpleImputer
@@ -634,7 +634,7 @@ K-nearest neighbours
          # Ensure your function returns a dict of metrics
     )
 <img width="719" height="706" alt="image" src="https://github.com/user-attachments/assets/44bf3277-195b-4f14-81c4-0af63cca5c8e" />
-#Neural Network
+## Neural Network
 
         from sklearn.neural_network import MLPClassifier
     from sklearn.pipeline import Pipeline
@@ -662,14 +662,14 @@ K-nearest neighbours
     )
 <img width="786" height="709" alt="image" src="https://github.com/user-attachments/assets/67015494-0865-497b-aa0b-1f36a47f117a" />
     
-# Aggregate model performance
+## Aggregate model performance
     results_df = pd.DataFrame(results).sort_values('Balanced Accuracy', ascending=False)
     unique_models_df = results_df.drop_duplicates(subset='Model', keep='first')
     unique_models_df = unique_models_df.reset_index(drop=True)
     unique_models_df
     print(unique_models_df)
     
-# Visualize Model
+## Visualize Model
 
     import matplotlib.pyplot as plt
     
@@ -682,5 +682,22 @@ K-nearest neighbours
 <img width="806" height="600" alt="image" src="https://github.com/user-attachments/assets/5f0ce8f6-17d0-4a7b-a3f3-6d2b5696eab7" />
 Overall, Gradient Boosting offers the best trade-off between performance, fairness, and explainability. More Explained in Academic Report!
 
+## Saving Trained Gradient Boost Moment
+
+    import joblib
+
+## After training the model
+    gb_pipeline.fit(X_train, y_train, **gb_fit_kwargs)
+
+## Save the trained pipeline to a file
+    joblib.dump(gb_pipeline, 'gradient_boosting_pipeline.pkl')
+
+# Load the saved pipeline
+    loaded_pipeline = joblib.load('gradient_boosting_pipeline.pkl')
+
+# Use it for prediction
+    predictions = loaded_pipeline.predict(X_test)
+
+    
 
 
