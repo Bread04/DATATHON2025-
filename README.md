@@ -32,13 +32,13 @@ The main objective of this challenge is to use real-world CTG recordings to buil
     sns.set_theme(style="whitegrid", palette="deep")
     pd.options.display.float_format = '{:,.2f}'.format
     
-Load Excel Data
+## Load Excel Data
     
     ctg_path = Path("C:/Users/Admin/Downloads/CTG.xlsx")  # Update if needed
     assert ctg_path.exists(), f"Expected Excel file at {ctg_path}"
     
-Open the Sheets inside the Excel File 
-Load Sheet 2 with header from row 2
+##Open the Sheets inside the Excel File 
+##Load Sheet 2 with header from row 2
 
         def read_feature_sheet(path: Path, sheet=1):
             xls = pd.ExcelFile(path)
